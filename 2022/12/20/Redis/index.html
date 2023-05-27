@@ -1,0 +1,495 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Redis | 梁伟健的博客</title><meta name="author" content="GDshenqingNo1"><meta name="copyright" content="GDshenqingNo1"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Redis一般基本指令set 1SET key value [EX seconds|PX milliseconds|EXAT timestamp|PXAT milliseconds-timestamp|KEEPTTL] [NX|XX] [GET]     EX 表明过期时间，单位是秒 和 setex 相同    PX 单位毫秒   EXAT 设置时间到某个时间戳（秒级）   PXAT 设置时间到某">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis">
+<meta property="og:url" content="http://example.com/2022/12/20/Redis/index.html">
+<meta property="og:site_name" content="梁伟健的博客">
+<meta property="og:description" content="Redis一般基本指令set 1SET key value [EX seconds|PX milliseconds|EXAT timestamp|PXAT milliseconds-timestamp|KEEPTTL] [NX|XX] [GET]     EX 表明过期时间，单位是秒 和 setex 相同    PX 单位毫秒   EXAT 设置时间到某个时间戳（秒级）   PXAT 设置时间到某">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/lucy.jpg">
+<meta property="article:published_time" content="2022-12-20T11:10:01.878Z">
+<meta property="article:modified_time" content="2022-12-20T11:24:50.576Z">
+<meta property="article:author" content="GDshenqingNo1">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/lucy.jpg"><link rel="shortcut icon" href="/img/gundam.png"><link rel="canonical" href="http://example.com/2022/12/20/Redis/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Redis',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-12-20 19:24:50'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr/></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/lucy.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">梁伟健的博客</a></span><div id="menus"><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Redis</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-12-20T11:10:01.878Z" title="发表于 2022-12-20 19:10:01">2022-12-20</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-12-20T11:24:50.576Z" title="更新于 2022-12-20 19:24:50">2022-12-20</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Redis"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h1><h2 id="一般"><a href="#一般" class="headerlink" title="一般"></a>一般</h2><h3 id="基本指令"><a href="#基本指令" class="headerlink" title="基本指令"></a>基本指令</h3><p><strong><code>set</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SET key value [EX seconds|PX milliseconds|EXAT timestamp|PXAT milliseconds-timestamp|KEEPTTL] [NX|XX] [GET]</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th align="center">EX</th>
+<th>表明过期时间，单位是秒 和 <strong>setex</strong> 相同</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><strong>PX</strong></td>
+<td><strong>单位毫秒</strong></td>
+</tr>
+<tr>
+<td align="center"><strong>EXAT</strong></td>
+<td><strong>设置时间到某个时间戳（秒级）</strong></td>
+</tr>
+<tr>
+<td align="center"><strong>PXAT</strong></td>
+<td><strong>设置时间到某个时间戳（毫秒级）</strong></td>
+</tr>
+<tr>
+<td align="center"><strong>NX</strong></td>
+<td><strong>当键k不存在时，设置键；设置成功返回ok，不成功时返回nil；和SETNX等价</strong></td>
+</tr>
+<tr>
+<td align="center"><strong>XX</strong></td>
+<td><strong>与NX相反只在键已经存在时， 才对键进行设置操作</strong></td>
+</tr>
+<tr>
+<td align="center"><strong>GET</strong></td>
+<td><strong>返回之前设的值</strong></td>
+</tr>
+</tbody></table>
+<p><strong><code>ttl</code></strong></p>
+<p>查看Key的过期时间(ms) -1是永久 -2是没有这个值</p>
+<p><strong><code>SETEX</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setex key seconds value</span><br></pre></td></tr></table></figure>
+
+<p>和 set key value ex 一样</p>
+<p>**<code>PSETEX</code>**同理</p>
+<p><strong><code>MSET</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MSET key value [key value ...]</span><br></pre></td></tr></table></figure>
+
+<p>同时设置多个键值对 返回OK</p>
+<p><strong><code>MGET</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MGET key [key key ....]</span><br></pre></td></tr></table></figure>
+
+<p>同时获取多个值</p>
+<p><strong><code>MSETNX</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msetnx key value [key value ...]</span><br></pre></td></tr></table></figure>
+
+<p>批量设置键值对，当所有key都不存在时返回1，否则返回0</p>
+<p><strong><code>GETEX</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GETEX key [EX seconds|PX milliseconds|EXAT timestamp|PXAT milliseconds-timestamp|PERSIST]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>用于获取k的值，并设置或者移除过期时间，参数类似于set</p>
+</li>
+<li><p>PERSIST移除k的过期时间</p>
+</li>
+<li><p>EX,PX,EXAT,PXAT 和set的相同</p>
+</li>
+</ul>
+<p><strong><code>GETSET</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getset key value</span><br></pre></td></tr></table></figure>
+
+<p>获取原来的值并设置一个新的值</p>
+<p><strong><code>GETRANGE</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getrange key start end</span><br></pre></td></tr></table></figure>
+
+<p>截取值的字符串，下标从0开始</p>
+<p><strong><code>SETRANGE</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setrange key offset value</span><br></pre></td></tr></table></figure>
+
+<p>setrange 用value从偏移量（offset）开始(<strong>包括offset</strong>)，覆盖key的值</p>
+<p><strong><code>STRLEN</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">strlen key</span><br></pre></td></tr></table></figure>
+
+<p>strlen key 返回键key存储的值的长度，<strong>不存在的k返回0</strong></p>
+<p><strong><code>APPEND</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">append key value</span><br></pre></td></tr></table></figure>
+
+<p>在值的末尾添加字符串</p>
+<p><strong><code>DEL</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">del key</span><br></pre></td></tr></table></figure>
+
+<p>删除键值对</p>
+<h3 id="数量相关"><a href="#数量相关" class="headerlink" title="数量相关"></a>数量相关</h3><h4 id="加"><a href="#加" class="headerlink" title="加"></a>加</h4><p><strong><code>INCR</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">incr key</span><br></pre></td></tr></table></figure>
+
+<p>incr 对key的值加1，并返回加1后的结果；如果k的值是字符串，无法加1，则提示错误</p>
+<p><strong><code>INCRBY</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">incrby key increment</span><br></pre></td></tr></table></figure>
+
+<p>类似 INCR,只不过可以设置任意数</p>
+<p><strong><code>INCRBYFLOAT</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">incrbyfloat key increment</span><br></pre></td></tr></table></figure>
+
+<p>增加浮点值或者加整型值</p>
+<h4 id="减"><a href="#减" class="headerlink" title="减"></a>减</h4><p><strong><code>DECR</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">decr key</span><br></pre></td></tr></table></figure>
+
+<p><strong><code>DECRBY</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">decrby key decrement</span><br></pre></td></tr></table></figure>
+
+<p>操作类似于<code>incr</code>和<code>incrby</code></p>
+<h3 id="set缓存对象"><a href="#set缓存对象" class="headerlink" title="set缓存对象"></a>set缓存对象</h3><ul>
+<li><p>直接缓存整个对象的 JSON </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SET user:1 &#x27;&#123;&quot;name&quot;:&quot;wxgg&quot;, &quot;age&quot;:18&#125;&#x27;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>采用将 key 进行分离为 user:ID:属性，采用 MSET 存储，用 MGET 获取各属性值</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MSET user:1:name lwj user:1:age 18 user:2:name tzm user:2:age 18</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="哈希"><a href="#哈希" class="headerlink" title="哈希"></a>哈希</h2><p>Hash 是一个键值对（key - value）集合</p>
+<p>其中 value 的形式 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">value=[&#123;field1，value1&#125;，...&#123;fieldN，valueN&#125;]</span><br></pre></td></tr></table></figure>
+
+<h3 id="内部实现"><a href="#内部实现" class="headerlink" title="内部实现"></a>内部实现</h3><p>Hash 类型的底层数据结构是由**压缩列表（ziplist)或哈希表(hashlist)**实现的：</p>
+<ul>
+<li>如果哈希类型元素个数小于 <strong>512</strong> 个（默认值，可由 <code>hash-max-ziplist-entries</code> 配置），所有值小于 <strong>64</strong>字节（默认值，可由 <code>hash-max-ziplist-value</code> 配置）的话，Redis 会使用<strong>压缩列表</strong>作为 Hash 类型的底层数据结构</li>
+<li>如果哈希类型元素不满足上面条件，Redis 会使用<strong>哈希表</strong>作为 Hash 类型的 底层数据结构</li>
+</ul>
+<p><strong>在 Redis 7.0 中，压缩列表数据结构已经废弃了，交由 listpack 数据结构来实现了</strong></p>
+<h3 id="基本指令-1"><a href="#基本指令-1" class="headerlink" title="基本指令"></a>基本指令</h3><p><strong><code>HSET</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hset key field value</span><br></pre></td></tr></table></figure>
+
+<p>一个key的值可以有多个 field但一个 field只能有一个 value ，类似于go中的map</p>
+<p><strong><code>HSETNX</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hsetnx key field value</span><br></pre></td></tr></table></figure>
+
+<p>当指定的字段不存在时才会被设置</p>
+<p><strong><code>HSET/HMSET</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hset/hmset key field value [field value ...]</span><br></pre></td></tr></table></figure>
+
+<p>hset&#x2F;hmset都可以设置一个哈希的多个字段的值</p>
+<p><strong><code>HGET</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hget key field</span><br></pre></td></tr></table></figure>
+
+<p>获取一个哈希的一个字段的值</p>
+<p><strong><code>HMGET</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hmget key field [field ...]</span><br></pre></td></tr></table></figure>
+
+<p>获取一个哈希的多个字段的值</p>
+<p><strong><code>HGETALL</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hgetall key</span><br></pre></td></tr></table></figure>
+
+<p>获取一个哈希所有字段的值,输出时依次轮流输出<code>field</code>和<code>value</code></p>
+<p><strong><code>HKEYS</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hkeys key</span><br></pre></td></tr></table></figure>
+
+<p>hvals key</p>
+<p><strong><code>HVALS</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hvals key</span><br></pre></td></tr></table></figure>
+
+<p>获取指定哈希的所有值，不获取字段名</p>
+<p><strong><code>HEXIST</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexist key field</span><br></pre></td></tr></table></figure>
+
+<p>判断字段是否存在于指定哈希中，存在返回<code>1</code>，不存在返回<code>0</code></p>
+<p><strong><code>HLEN</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hlen key</span><br></pre></td></tr></table></figure>
+
+<p>获取指定哈希中字段的数量</p>
+<p><strong><code>HSTRLEN</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hstrlen key field</span><br></pre></td></tr></table></figure>
+
+<p>获取指定哈希中某个字段的长度</p>
+<p><strong><code>HDEL</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hdel key</span><br></pre></td></tr></table></figure>
+
+<p>删除一个哈希</p>
+<h3 id="数量相关-1"><a href="#数量相关-1" class="headerlink" title="数量相关"></a>数量相关</h3><p><strong><code>HINCRBY</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hincrby key field increment</span><br></pre></td></tr></table></figure>
+
+<p>和 incryby类似 将指定哈希中的指定字段的值加一个指定的整型值</p>
+<p><strong><code>HINCRBYFLOAT</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hincrbyfloat key field increment</span><br></pre></td></tr></table></figure>
+
+<p>将指定哈希中的指定字段的值加一个指定的浮点型值 也可以加整型值</p>
+<h3 id="用hash缓存对象"><a href="#用hash缓存对象" class="headerlink" title="用hash缓存对象"></a>用hash缓存对象</h3><p>例子</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">HSET uid:1 name lmj age 18</span><br><span class="line">HSET uid:2 name wx  age 18</span><br><span class="line">HSET uid:2 name yxh age 18</span><br></pre></td></tr></table></figure>
+
+<h2 id="列表"><a href="#列表" class="headerlink" title="列表"></a>列表</h2><p>List 列表是简单的字符串列表，<strong>按照插入顺序排序</strong>，可以从头部或尾部向 List 列表添加元素。</p>
+<p>列表的最大长度为 <strong>2^32 - 1</strong>，也即每个列表支持超过 <strong>40 亿</strong>个元素。</p>
+<h3 id="内部实现-1"><a href="#内部实现-1" class="headerlink" title="内部实现"></a>内部实现</h3><p>List 类型的底层数据结构是由<strong>双向链表或压缩列表</strong>实现的：</p>
+<ul>
+<li>如果列表的元素个数小于 <strong>512</strong> 个（默认值，可由 <code>list-max-ziplist-entries</code> 配置），列表每个元素的值都小于 <strong>64</strong> 字节（默认值，可由 <code>list-max-ziplist-value</code> 配置），Redis 会使用<strong>压缩列表</strong>作为 List 类型的底层数据结构；</li>
+<li>如果列表的元素不满足上面的条件，Redis 会使用<strong>双向链表</strong>作为 List 类型的底层数据结构；</li>
+</ul>
+<p><strong>在 Redis 3.2 版本之后，List 数据类型底层数据结构就只由 quicklist（快速表） 实现了，替代了双向链表和压缩列表</strong></p>
+<h3 id="基本指令-2"><a href="#基本指令-2" class="headerlink" title="基本指令"></a>基本指令</h3><p><strong><code>LPUSH</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lpush key element [element ...]</span><br></pre></td></tr></table></figure>
+
+<p>当key存在但是却不是列表会返回错误</p>
+<p><strong><code>LRANGE</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">LRANGE key start stop</span><br><span class="line">lrange gocybee 0 -1</span><br></pre></td></tr></table></figure>
+
+<p>-1是倒数第一个 依次类推</p>
+<p><strong><code>LPOP</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LPOP key [count]</span><br></pre></td></tr></table></figure>
+
+<p>移除列表key的表头元素，出队列 counts是出队次数</p>
+<p><strong><code>RPOP</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RPOP key [count]</span><br></pre></td></tr></table></figure>
+
+<p>与LPOP类似，移除列表key的尾元素</p>
+<p><strong><code>LSET</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lset key index element</span><br></pre></td></tr></table></figure>
+
+<p>通过<strong>索引</strong>设置列表元素的值</p>
+<p><strong><code>LLEN</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">llen key</span><br></pre></td></tr></table></figure>
+
+<p>获取列表长度</p>
+<p><strong><code>BLPOP</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">blpop key [key ...] timeout</span><br></pre></td></tr></table></figure>
+
+<p>移出并获取列表的第一个元素， 如果列表没有元素会阻塞列表直到等待超时或发现可弹出元素为止</p>
+<p><code>timeout</code>以秒做单位</p>
+<h2 id="集合"><a href="#集合" class="headerlink" title="集合"></a>集合</h2><p>Set 类型是一个无序并唯一的键值集合，它的存储顺序不会按照插入的先后顺序进行存储。</p>
+<p>一个集合最多可以存储 <strong>2^32-1</strong>个元素。概念和数学中个的集合基本类似，可以交集，并集，差集等等，所以 Set 类型除了支持集合内的增删改查，同时还支持多个集合取交集、并集、差集。</p>
+<p>Set 类型比较适合用来数据去重和保障数据的唯一性，还可以用来统计多个集合的交集、错集和并集等，当我们存储的数据是无序并且需要去重的情况下，比较适合使用集合类型进行存储</p>
+<p>Set 类型和 List 类型的区别如下：</p>
+<ul>
+<li>List 可以存储重复元素，Set 只能存储非重复元素</li>
+<li>List 是按照元素的先后顺序存储元素的，而 Set 则是无序方式存储元素的</li>
+</ul>
+<h3 id="内部实现-2"><a href="#内部实现-2" class="headerlink" title="内部实现"></a>内部实现</h3><p>Set 类型的底层数据结构是由<strong>哈希表或整数集合</strong>实现的：</p>
+<ul>
+<li>如果集合中的元素都是整数且元素个数小于 <strong>512</strong> （默认值，<code>set-maxintset-entries</code>配置）个，Redis 会使用<strong>整数集合</strong>作为 Set 类型的底层数据结构</li>
+<li>如果集合中的元素不满足上面条件，则 Redis 使用<strong>哈希表</strong>作为 Set 类型的底层数据结构</li>
+</ul>
+<h3 id="基本指令-3"><a href="#基本指令-3" class="headerlink" title="基本指令"></a>基本指令</h3><p><strong><code>SADD</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SADD key member [member ...]</span><br></pre></td></tr></table></figure>
+
+<p>往集合key中存入元素，元素存在则忽略，若key不存在则新建</p>
+<p><strong><code>SREM</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SREM key member [member ...]</span><br></pre></td></tr></table></figure>
+
+<p>从集合key中删除元素</p>
+<p><strong><code>SMEMBERS</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SMEMBERS key</span><br></pre></td></tr></table></figure>
+
+<p>查看所有的members</p>
+<p><strong><code>SCARD</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SCARD key</span><br></pre></td></tr></table></figure>
+
+<p>查看元素个数</p>
+<p><strong><code>SISMEMBER</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SISMEMBER key member</span><br></pre></td></tr></table></figure>
+
+<p>判断元素是否是在集合中</p>
+<p><strong><code>SRANDMEMBER</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SRANDMEMBER key [count]</span><br></pre></td></tr></table></figure>
+
+<p>从集合key中随机选出count个元素，<strong>元素不从key中删除</strong></p>
+<p><strong><code>SPOP</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SPOP key [count]</span><br></pre></td></tr></table></figure>
+
+<p>从集合key中随机选出count个元素，<strong>元素从key中删除</strong></p>
+<h3 id="集合间运算"><a href="#集合间运算" class="headerlink" title="集合间运算"></a>集合间运算</h3><p><strong><code>SINTER</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SINTER key [key ...]</span><br></pre></td></tr></table></figure>
+
+<p>交集运算返回两个set的交集</p>
+<p><strong><code>SINTERSTORE</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SINTERSTORE destination key [key ...]</span><br><span class="line">SINTERSTORE common gocybee lanshan</span><br></pre></td></tr></table></figure>
+
+<p>将交集结果存入新集合destination中</p>
+<p><strong><code>SUNION</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SUNION gocybee lanshan</span><br></pre></td></tr></table></figure>
+
+<p>并集运算</p>
+<p><strong><code>SUNIONSTORE</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SUNIONSTORE destination key [key ...]</span><br></pre></td></tr></table></figure>
+
+<p>将并集结果存入新集合destination中</p>
+<p><strong><code>SDIFF</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SDIFF key [key ...]</span><br></pre></td></tr></table></figure>
+
+<p>差集运算</p>
+<p><strong><code>SDIFFSTORE</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SDIFFSTORE destination key [key ...]</span><br></pre></td></tr></table></figure>
+
+<p>将差集结果存入新集合destination中</p>
+<p>**潜在的风险:**Set 的差集、并集和交集的计算复杂度较高，在数据量较大的情况下，如果直接执行这些计算，会导致 Redis 实例阻塞</p>
+<p>在主从集群中，为了避免主库因为 Set 做聚合计算（交集、差集、并集）时导致主库被阻塞，我们可以选择一个从库完成聚合统计，或者把数据返回给客户端，由客户端来完成聚合统计</p>
+<h3 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h3><h4 id="点赞"><a href="#点赞" class="headerlink" title="点赞"></a>点赞</h4><p>Set 类型可以保证一个用户只能点一个赞，这里举例子一个场景，key 是文章id，value 是用户id</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; SADD article:1 uid:1</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; SADD article:1 uid:2</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; SADD article:1 uid:3</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; SCARD article:1</span><br><span class="line">(integer) 3</span><br><span class="line">127.0.0.1:6379&gt; SREM article:1 uid:1</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; SCARD article:1</span><br><span class="line">(integer) 2</span><br></pre></td></tr></table></figure>
+
+<h4 id="共同关注"><a href="#共同关注" class="headerlink" title="共同关注"></a>共同关注</h4><p>Set 类型支持交集运算，所以可以用来计算共同关注的好友、公众号等。</p>
+<p>key 可以是用户id，value 则是已关注的公众号的id。</p>
+<p><code>uid:1</code> 用户关注频道号 id 为 5、6、7、8、9，<code>uid:2</code> 用户关注 频道号id 为 7、8、9、10、11。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; SADD uid:1 5 6 7 8 9</span><br><span class="line">(integer) 5</span><br><span class="line">127.0.0.1:6379&gt; SADD uid:2 7 8 9 10 11</span><br><span class="line">(integer) 5</span><br></pre></td></tr></table></figure>
+
+<h4 id="抽奖活动"><a href="#抽奖活动" class="headerlink" title="抽奖活动"></a>抽奖活动</h4><p>存储某活动中中奖的用户名 ，Set 类型因为有去重功能，可以保证同一个用户不会中奖两次。</p>
+<p>key为抽奖活动名，value为员工名称，把所有员工名称放入抽奖箱</p>
+<p>再利用 <code>SRANDRM </code>（放回）或者是 <code>SPOP</code>（不放回）</p>
+<h2 id="有序集合"><a href="#有序集合" class="headerlink" title="有序集合"></a>有序集合</h2><h3 id="内部实现-3"><a href="#内部实现-3" class="headerlink" title="内部实现"></a>内部实现</h3><p>Zset 类型的底层数据结构是由<strong>压缩列表或跳表</strong>实现的：</p>
+<ul>
+<li>如果有序集合的元素个数小于 <code>128</code> 个，并且每个元素的值小于 <code>64</code> 字节时，Redis 会使用<strong>压缩列表</strong>作为 Zset 类型的底层数据结构</li>
+<li>如果有序集合的元素不满足上面的条件，Redis 会使用<strong>跳表</strong>作为 Zset 类型的底层数据结构</li>
+</ul>
+<p><strong>在 Redis 7.0 中，压缩列表数据结构已经废弃了，交由 listpack 数据结构来实现了</strong></p>
+<h3 id="基本指令-4"><a href="#基本指令-4" class="headerlink" title="基本指令"></a>基本指令</h3><p><strong><code>ZADD</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ZADD key score member [[score member]...]</span><br></pre></td></tr></table></figure>
+
+<p>往有序集合key中加入带<strong>分值</strong>元素 ,score必须是<strong>浮点数</strong>或者<strong>整型</strong>，添加成功后返回被成功添加的新成员的数量</p>
+<p><code>ZREM</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ZREM key member [member...]</span><br></pre></td></tr></table></figure>
+
+<p>往有序集合key中删除元素</p>
+<p><code>ZSCORE</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ZSCORE key member</span><br></pre></td></tr></table></figure>
+
+<p>返回有序集合key中元素member的<strong>分值</strong></p>
+<p><strong><code>ZCARD</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ZCARD key</span><br></pre></td></tr></table></figure>
+
+<p>返回有序集合个数</p>
+<p><strong><code>ZRANGE</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ZRANGE key start stop [WITHSCORES]</span><br><span class="line">ZRANGE movie 0 -1</span><br></pre></td></tr></table></figure>
+
+<p>正序获取有序集合key从start下标到stop下标的元素</p>
+<p><strong><code>ZREVRANGE</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ZREVRANGE key start stop [WITHSCORES]</span><br></pre></td></tr></table></figure>
+
+<p>倒序获取有序集合key从start下标到stop下标的元素</p>
+<p><strong><code>ZRANGENYSCORE</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ZRANGEBYSCORE key min max [WITHSCORES] [LIMIT offset count]</span><br></pre></td></tr></table></figure>
+
+<p>返回有序集合中指定分数区间内的成员，分数由<strong>低到高排序</strong></p>
+<p><strong><code>ZREVRANGEBYSCORE</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ZREVRANGEBYSCORE key max min [WITHSCORES] [LIMIT offset count]</span><br></pre></td></tr></table></figure>
+
+<p>返回有序集合中指定分数区间内的成员，分数由<strong>高到低排序</strong></p>
+<p><strong><code>ZRANGEBYLEX</code></strong>(没啥用zrange就是按字典排的)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ZRANGEBYLEX key min max [LIMIT offset count]</span><br></pre></td></tr></table></figure>
+
+<p>返回指定成员区间内的成员，按字典正序排列, <strong>分数必须相同</strong></p>
+<p><strong><code>ZREVRANGEBYLEX</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ZREVRANGEBYLEX key max min [LIMIT offset count]</span><br></pre></td></tr></table></figure>
+
+<p>返回指定成员区间内的成员，按字典倒序排列, <strong>分数必须相同</strong></p>
+<h3 id="数量相关-2"><a href="#数量相关-2" class="headerlink" title="数量相关"></a>数量相关</h3><p><strong><code>ZINCRBY</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ZINCRBY key increment member</span><br></pre></td></tr></table></figure>
+
+<p>为有序集合key中元素member的<strong>分值</strong>加上increment</p>
+<h3 id="应用场景-1"><a href="#应用场景-1" class="headerlink" title="应用场景"></a>应用场景</h3><p>Zset 类型（Sorted Set，有序集合） 可以根据元素的权重来排序，我们可以自己来决定每个元素的权重值</p>
+<p>在面对需要<strong>展示最新列表</strong>、<strong>排行榜</strong>等场景时，如果<strong>数据更新频繁</strong>或者<strong>需要分页显示</strong>，可以优先考虑使用 <strong>Sorted Set</strong></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://example.com">GDshenqingNo1</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2022/12/20/Redis/">http://example.com/2022/12/20/Redis/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">梁伟健的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="/img/lucy.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2022/12/20/Docker/"><img class="prev-cover" src="/img/lucy.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Docker</div></div></a></div><div class="next-post pull-right"><a href="/2022/12/20/MySQL/"><img class="next-cover" src="/img/lucy.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Mysql</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">GDshenqingNo1</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/GDshenqingNo1"><i class="fab fa-github"></i><span>Github</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/GDshenqingNo1" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:liangweijian666@outlook.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis"><span class="toc-number">1.</span> <span class="toc-text">Redis</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E8%88%AC"><span class="toc-number">1.1.</span> <span class="toc-text">一般</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%8C%87%E4%BB%A4"><span class="toc-number">1.1.1.</span> <span class="toc-text">基本指令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E9%87%8F%E7%9B%B8%E5%85%B3"><span class="toc-number">1.1.2.</span> <span class="toc-text">数量相关</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A0"><span class="toc-number">1.1.2.1.</span> <span class="toc-text">加</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%87%8F"><span class="toc-number">1.1.2.2.</span> <span class="toc-text">减</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#set%E7%BC%93%E5%AD%98%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.1.3.</span> <span class="toc-text">set缓存对象</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%93%88%E5%B8%8C"><span class="toc-number">1.2.</span> <span class="toc-text">哈希</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%85%E9%83%A8%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.2.1.</span> <span class="toc-text">内部实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%8C%87%E4%BB%A4-1"><span class="toc-number">1.2.2.</span> <span class="toc-text">基本指令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E9%87%8F%E7%9B%B8%E5%85%B3-1"><span class="toc-number">1.2.3.</span> <span class="toc-text">数量相关</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8hash%E7%BC%93%E5%AD%98%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.2.4.</span> <span class="toc-text">用hash缓存对象</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%97%E8%A1%A8"><span class="toc-number">1.3.</span> <span class="toc-text">列表</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%85%E9%83%A8%E5%AE%9E%E7%8E%B0-1"><span class="toc-number">1.3.1.</span> <span class="toc-text">内部实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%8C%87%E4%BB%A4-2"><span class="toc-number">1.3.2.</span> <span class="toc-text">基本指令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9B%86%E5%90%88"><span class="toc-number">1.4.</span> <span class="toc-text">集合</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%85%E9%83%A8%E5%AE%9E%E7%8E%B0-2"><span class="toc-number">1.4.1.</span> <span class="toc-text">内部实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%8C%87%E4%BB%A4-3"><span class="toc-number">1.4.2.</span> <span class="toc-text">基本指令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9B%86%E5%90%88%E9%97%B4%E8%BF%90%E7%AE%97"><span class="toc-number">1.4.3.</span> <span class="toc-text">集合间运算</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">1.4.4.</span> <span class="toc-text">应用场景</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%82%B9%E8%B5%9E"><span class="toc-number">1.4.4.1.</span> <span class="toc-text">点赞</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B1%E5%90%8C%E5%85%B3%E6%B3%A8"><span class="toc-number">1.4.4.2.</span> <span class="toc-text">共同关注</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8A%BD%E5%A5%96%E6%B4%BB%E5%8A%A8"><span class="toc-number">1.4.4.3.</span> <span class="toc-text">抽奖活动</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%89%E5%BA%8F%E9%9B%86%E5%90%88"><span class="toc-number">1.5.</span> <span class="toc-text">有序集合</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%85%E9%83%A8%E5%AE%9E%E7%8E%B0-3"><span class="toc-number">1.5.1.</span> <span class="toc-text">内部实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%8C%87%E4%BB%A4-4"><span class="toc-number">1.5.2.</span> <span class="toc-text">基本指令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E9%87%8F%E7%9B%B8%E5%85%B3-2"><span class="toc-number">1.5.3.</span> <span class="toc-text">数量相关</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF-1"><span class="toc-number">1.5.4.</span> <span class="toc-text">应用场景</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/05/27/go-Makefile/" title="Makefile">Makefile</a><time datetime="2023-05-27T10:34:23.147Z" title="发表于 2023-05-27 18:34:23">2023-05-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/05/27/flag&amp;&amp;args/" title="flag &amp; args">flag &amp; args</a><time datetime="2023-05-27T10:33:15.051Z" title="发表于 2023-05-27 18:33:15">2023-05-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/05/27/Golang%20Note/" title="goland note">goland note</a><time datetime="2023-05-27T10:32:12.127Z" title="发表于 2023-05-27 18:32:12">2023-05-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/05/09/%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E3%80%81CDN/" title="正向代理、反向代理、CDN">正向代理、反向代理、CDN</a><time datetime="2023-05-09T15:33:35.034Z" title="发表于 2023-05-09 23:33:35">2023-05-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/05/09/sentinel/" title="Sentinel限流、熔断、降级">Sentinel限流、熔断、降级</a><time datetime="2023-05-09T15:33:24.742Z" title="发表于 2023-05-09 23:33:24">2023-05-09</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By GDshenqingNo1</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><div class="js-pjax"></div><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

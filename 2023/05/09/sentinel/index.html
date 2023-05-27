@@ -1,0 +1,275 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Sentinel限流、熔断、降级 | 梁伟健的博客</title><meta name="author" content="GDshenqingNo1"><meta name="copyright" content="GDshenqingNo1"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="快速开始引入Sentinel依赖1go get github.com&#x2F;alibaba&#x2F;sentinel-golang v1.0.4  通用配置及初始化使用 Sentinel 需要在应用启动时对 Sentinel 运行环境进行相关配置并触发初始化。  InitDefault：从环境变量指定的配置文件以及环境变量中读取相应配置来初始化 Sentinel，若环境变量不存在则使用默认值。 Init(con">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Sentinel限流、熔断、降级">
+<meta property="og:url" content="http://example.com/2023/05/09/sentinel/index.html">
+<meta property="og:site_name" content="梁伟健的博客">
+<meta property="og:description" content="快速开始引入Sentinel依赖1go get github.com&#x2F;alibaba&#x2F;sentinel-golang v1.0.4  通用配置及初始化使用 Sentinel 需要在应用启动时对 Sentinel 运行环境进行相关配置并触发初始化。  InitDefault：从环境变量指定的配置文件以及环境变量中读取相应配置来初始化 Sentinel，若环境变量不存在则使用默认值。 Init(con">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/lucy.jpg">
+<meta property="article:published_time" content="2023-05-09T15:33:24.742Z">
+<meta property="article:modified_time" content="2023-05-09T15:34:22.681Z">
+<meta property="article:author" content="GDshenqingNo1">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/lucy.jpg"><link rel="shortcut icon" href="/img/gundam.png"><link rel="canonical" href="http://example.com/2023/05/09/sentinel/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Sentinel限流、熔断、降级',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-05-09 23:34:22'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr/></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/lucy.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">梁伟健的博客</a></span><div id="menus"><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Sentinel限流、熔断、降级</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-05-09T15:33:24.742Z" title="发表于 2023-05-09 23:33:24">2023-05-09</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-05-09T15:34:22.681Z" title="更新于 2023-05-09 23:34:22">2023-05-09</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Sentinel限流、熔断、降级"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="快速开始"><a href="#快速开始" class="headerlink" title="快速开始"></a>快速开始</h1><h2 id="引入Sentinel依赖"><a href="#引入Sentinel依赖" class="headerlink" title="引入Sentinel依赖"></a>引入Sentinel依赖</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go get github.com/alibaba/sentinel-golang v1.0.4</span><br></pre></td></tr></table></figure>
+
+<h2 id="通用配置及初始化"><a href="#通用配置及初始化" class="headerlink" title="通用配置及初始化"></a>通用配置及初始化</h2><p>使用 Sentinel 需要在应用启动时对 Sentinel 运行环境进行相关配置并触发初始化。</p>
+<ul>
+<li><code>InitDefault</code>：从环境变量指定的配置文件以及环境变量中读取相应配置来初始化 Sentinel，若环境变量不存在则使用默认值。</li>
+<li><code>Init(configpath string)</code>：从给定的 YAML 文件中读取相应配置来初始化 Sentinel。</li>
+<li><code>InitWithConfig(configEntity *config.Entity)</code>：用户硬编码配置对象<code>*config.Entity</code>来初始化Sentinel。</li>
+</ul>
+<p>示例代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">import (</span><br><span class="line">	sentinel &quot;github.com/alibaba/sentinel-golang/api&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">func initSentinel() &#123;</span><br><span class="line">	err := sentinel.Init(confPath)</span><br><span class="line">	if err != nil &#123;</span><br><span class="line">		// 初始化 Sentinel 失败</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>必须成功调用 Sentinel 初始化函数以后再调用埋点 API 。</p>
+<h2 id="定义资源"><a href="#定义资源" class="headerlink" title="定义资源"></a>定义资源</h2><p><code>资源(sentinel)</code>是sentinel中最核心的概念之一，Sentinel中所有的限流熔断机制都是基于资源生效的，<strong>不同的限流熔断规则互相隔离互不影响</strong>。</p>
+<p>在 Sentinel 中，用户可以灵活的定义资源埋点。资源可以是应用、接口、函数、甚至是一段代码。</p>
+<h3 id="埋点"><a href="#埋点" class="headerlink" title="埋点"></a>埋点</h3><p>用户通过Sentinel api 包里面的接口可以把资源访问包起来，这一步称为”埋点”。每个埋点都有一个资源名称(resource),用于区分不同的资源，并针对资源买点配置流量配置规则。即使没有配置任何规则，资源埋点仍然会产生 metric 统计</p>
+<p>下面示例，将<code>fmt.Println(&quot;hello world&quot;)</code>作为资源</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Entry 方法用于埋点</span></span><br><span class="line">e, b := sentinel.Entry(<span class="string">&quot;some-test&quot;</span>, sentinel.WithTrafficType(base.Inbound))</span><br><span class="line"><span class="keyword">if</span> b != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="comment">// 熔断 可以从 BlockError 中获得熔断的原因</span></span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">	<span class="comment">// 资源被保护起来</span></span><br><span class="line">        fmt.Println(<span class="string">&quot;hello world&quot;</span>)</span><br><span class="line">	<span class="comment">// 确保最后退出 entry</span></span><br><span class="line">	e.Exit()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="规则配置"><a href="#规则配置" class="headerlink" title="规则配置"></a>规则配置</h3><h3 id="硬编码方式"><a href="#硬编码方式" class="headerlink" title="硬编码方式"></a>硬编码方式</h3><p>Sentinel 支持原始的硬编码方式加载规则，可以通过各个模块的<code>LoadRule(rules)</code>函数加载规则。以流控规则为例：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">_, err = flow.LoadRules([]*flow.Rule&#123;</span><br><span class="line">	&#123;</span><br><span class="line">		Resource:               <span class="string">&quot;some-test&quot;</span>,</span><br><span class="line">		Threshold:              <span class="number">10</span>,</span><br><span class="line">		TokenCalculateStrategy: flow.Direct,</span><br><span class="line">		ControlBehavior:        flow.Reject,</span><br><span class="line">	&#125;,</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">	<span class="comment">// 加载规则失败，进行相关处理</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="动态数据源"><a href="#动态数据源" class="headerlink" title="动态数据源"></a>动态数据源</h3><p>Sentinel 提供动态数据源接口进行扩展，用户可以通过动态文件、etcd、consul、nacos 等配置中心来动态地配置规则。</p>
+<h1 id="流量控制"><a href="#流量控制" class="headerlink" title="流量控制"></a>流量控制</h1><h2 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h2><p>流量控制(flow control)，其原理是监控<code>资源(Resource)</code>的统计指标，然后根据token计算策略来计算资源的可用token，然后根据流量控制策略对请求进行控制，避免被瞬时的流量高峰冲垮，从而保障应用的高可用性。</p>
+<p>Sentinel 通过定义流控规则来实现对 <code>Resource</code> 的流量控制。在 Sentinel 内部会在加载流控规则时候将每个 flow.Rule 都会被转换成流量控制器(TrafficShapingController)。 每个流量控制器实例都会有自己独立的统计结构，这里统计结构是一个滑动窗口。Sentinel 内部会尽可能复用 Resource 级别的全局滑动窗口，如果流控规则的统计设置没法复用Resource的全局统计结构，那么Sentinel会为流量控制器创建一个全新的私有的滑动窗口，然后通过 flow.StandaloneStatSlot 这个统计Slot(槽)来维护统计指标。</p>
+<h2 id="流控规则"><a href="#流控规则" class="headerlink" title="流控规则"></a>流控规则</h2><p>定义：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Rule <span class="keyword">struct</span> &#123;</span><br><span class="line">	<span class="comment">// ID represents the unique ID of the rule (optional).</span></span><br><span class="line">	ID <span class="type">string</span> <span class="string">`json:&quot;id,omitempty&quot;`</span></span><br><span class="line">	<span class="comment">// Resource represents the resource name.</span></span><br><span class="line">	Resource               <span class="type">string</span>                 <span class="string">`json:&quot;resource&quot;`</span></span><br><span class="line">	TokenCalculateStrategy TokenCalculateStrategy <span class="string">`json:&quot;tokenCalculateStrategy&quot;`</span></span><br><span class="line">	ControlBehavior        ControlBehavior        <span class="string">`json:&quot;controlBehavior&quot;`</span></span><br><span class="line">	<span class="comment">// Threshold means the threshold during StatIntervalInMs</span></span><br><span class="line">	<span class="comment">// If StatIntervalInMs is 1000(1 second), Threshold means QPS</span></span><br><span class="line">	Threshold         <span class="type">float64</span>          <span class="string">`json:&quot;threshold&quot;`</span></span><br><span class="line">	RelationStrategy  RelationStrategy <span class="string">`json:&quot;relationStrategy&quot;`</span></span><br><span class="line">	RefResource       <span class="type">string</span>           <span class="string">`json:&quot;refResource&quot;`</span></span><br><span class="line">	MaxQueueingTimeMs <span class="type">uint32</span>           <span class="string">`json:&quot;maxQueueingTimeMs&quot;`</span></span><br><span class="line">	WarmUpPeriodSec   <span class="type">uint32</span>           <span class="string">`json:&quot;warmUpPeriodSec&quot;`</span></span><br><span class="line">	WarmUpColdFactor  <span class="type">uint32</span>           <span class="string">`json:&quot;warmUpColdFactor&quot;`</span></span><br><span class="line">	<span class="comment">// StatIntervalInMs indicates the statistic interval and it&#x27;s the optional setting for flow Rule.</span></span><br><span class="line">	<span class="comment">// If user doesn&#x27;t set StatIntervalInMs, that means using default metric statistic of resource.</span></span><br><span class="line">	<span class="comment">// If the StatIntervalInMs user specifies can not reuse the global statistic of resource,</span></span><br><span class="line">	<span class="comment">// 		sentinel will generate independent statistic structure for this rule.</span></span><br><span class="line">	StatIntervalInMs <span class="type">uint32</span> <span class="string">`json:&quot;statIntervalInMs&quot;`</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里只介绍一些重点，详情看[流控规则](<a target="_blank" rel="noopener" href="https://sentinelguard.io/zh-cn/docs/golang/flow-control.html">flow-control | Sentinel (sentinelguard.io)</a>)</p>
+<ul>
+<li><code>Resource</code>：资源名，即规则的作用目标。</li>
+<li><code>TokenCalculateStrategy</code>: 当前流量控制器的Token计算策略。Direct表示直接使用字段 Threshold 作为阈值；WarmUp表示使用预热方式计算Token的阈值。</li>
+<li><code>ControlBehavior</code>: 表示流量控制器的控制策略；Reject表示超过阈值直接拒绝，Throttling表示匀速排队。</li>
+<li><code>Threshold</code>: 表示流控阈值；如果字段 StatIntervalInMs 是1000(也就是1秒)，那么Threshold就表示<code>QPS(Queries Per Second)</code>，流量控制器也就会依据资源的QPS来做流控。</li>
+<li><code>StatIntervalInMs</code>: 规则对应的流量控制器的独立统计结构的统计周期。如果StatIntervalInMs是1000，也就是统计QPS。</li>
+</ul>
+<h2 id="流量控制器的统计结构"><a href="#流量控制器的统计结构" class="headerlink" title="流量控制器的统计结构"></a>流量控制器的统计结构</h2><p> 每个流量控制器都有自己独立的统计结构。流量控制器的统计结构由规则中的<code>StatIntervalInMs</code>字段设置，<code>StatIntervalInMs</code>表示统计结构的统计周期。</p>
+<p>Sentinel 默认会为每个Resource创建一个全局的滑动窗口统计结构，这个全局的统计结构默认是一个间隔为10s,20个格子的滑动窗口，也就是每个统计窗口长度是500ms。</p>
+<p>流量控制器实例会尽可能复用这个Resource级别的全局统计结构，复用逻辑原则是：优先复用Resource级别的全局统计结构，如果不可复用，就重新创建一个独立的滑动窗口统计结构(BucketLeapArray)，具体的逻辑细节如下：</p>
+<ol>
+<li>如果<code>StatIntervalInMs</code>大于全局滑动窗口的间隔(默认10s)，那么将不可复用全局统计结构。Sentinel会给流量控制器创建一个长度是<code>StatIntervalInMs</code>，格子数是1的全新统计结构，这个全新的统计结构由Sentinel内部的<code>StandaloneStatSlot</code>来维护统计。</li>
+<li>如果<code>StatIntervalInMs</code>小于全局滑动窗口的窗口长度(默认是500ms), 那么将不可复用全局统计结构。Sentinel会给流量控制器创建一个长度是<code>StatIntervalInMs</code>，格子数是1的全新统计结构，这个全新的统计结构由Sentinel内部的<code>StandaloneStatSlot</code>来维护统计。</li>
+<li>如果<code>StatIntervalInMs</code>在集合[全局滑动窗口的窗口长度，全局滑动窗口的间隔]之间，首先需要计算格子数：如果<code>StatIntervalInMs</code>可以被全局滑动窗口的窗口长度(默认是500ms)整除，那么格子数就为 <code>StatIntervalInMs</code>&#x2F;<code>GlobalStatisticBucketLengthInMs</code>，如果不可整除，格子数是1。然后会调用 <code>core/base/CheckValidityForReuseStatistic</code>函数来判断当前统计结构间隔和格子数是否可以复用全局统计结构。如果可以复用，就会基于resource级别的全局统计结构<code>ResourceNode</code>创建<code>SlidingWindow</code>，SlidingWindow是一个虚拟结构，SlidingWindow只可读，而且读的数据是通过聚合<code>ResourceNode</code>数据得到的。如果不可复用，就使用统计结构间隔和格子数创建全新的滑动窗口(BucketLeapArray)。</li>
+</ol>
+<h2 id="常见场景的规则配置"><a href="#常见场景的规则配置" class="headerlink" title="常见场景的规则配置"></a>常见场景的规则配置</h2><h3 id="基于QPS对某个资源限流"><a href="#基于QPS对某个资源限流" class="headerlink" title="基于QPS对某个资源限流"></a>基于QPS对某个资源限流</h3><p>基于对某个资源访问的QPS来做流控，这个是非常常见的场景。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	Resource:                <span class="string">&quot;some-test&quot;</span>,</span><br><span class="line">    TokenCalculateStrategy:  flow.Direct, <span class="comment">//可选</span></span><br><span class="line">	ControlBehavior:         flow.Reject,  <span class="comment">//可选</span></span><br><span class="line">	Threshold:               <span class="number">500</span>,	<span class="comment">//表示QPS的阈值</span></span><br><span class="line">    StatIntervalInMs:        <span class="number">1000</span>,   <span class="comment">//必须是1000</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="基于一定统计间隔时间来控制总的请求数"><a href="#基于一定统计间隔时间来控制总的请求数" class="headerlink" title="基于一定统计间隔时间来控制总的请求数"></a>基于一定统计间隔时间来控制总的请求数</h3><p>这个场景就是想在一定统计周期内控制请求的总量。比如<code>StatIntervalInMs</code>配置10000，<code>Threshold</code>配置10000，这种配置意思就是控制10s内最大请求数是10000。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	Resource:                <span class="string">&quot;some-test&quot;</span>,</span><br><span class="line">    TokenCalculateStrategy:  flow.Direct,</span><br><span class="line">	ControlBehavior:         flow.Reject,</span><br><span class="line">	Threshold:               <span class="number">10000</span>,</span><br><span class="line">    StatIntervalInMs:        <span class="number">10000</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意：</strong></p>
+<p>这种流控配置对于脉冲类型的流量抵抗力很弱，有极大潜在风险压垮系统。比如流量表现形式是10s内请求数最大是9800，实际上流量可能是脉冲形式。</p>
+<p>这种大周期的配置其实也有好处，就是能够做到流量的无损，前提是保证系统能够抗住这种周期内的脉冲流量，当然如果流量曲线在秒级别比较平顺，也就不存在脉冲问题，我们是建议统计周期可以稍微调大。</p>
+<h3 id="毫秒级别流控"><a href="#毫秒级别流控" class="headerlink" title="毫秒级别流控"></a>毫秒级别流控</h3><p>针对一些流量曲在毫秒级别波动非常大的场景(类似于脉冲)，建议<code>StatIntervalInMs</code>的配置在毫秒级别，除非特殊场景，建议配置的值为100ms的倍数，比如100，200这种。这种相当于缩小了统计周期，将QPS的周期缩小了10倍，控制周期降低到了100ms。这种配置能够很好的应对脉冲流量，保障系统稳定性。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	Resource:                <span class="string">&quot;some-test&quot;</span>,</span><br><span class="line">    TokenCalculateStrategy:  flow.Direct,</span><br><span class="line">	ControlBehavior:         flow.Reject,</span><br><span class="line">	Threshold:               <span class="number">80</span>,</span><br><span class="line">    StatIntervalInMs:        <span class="number">100</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面限制了100ms的阈值是80，实际QPS大概是800。</p>
+<p>注意：这种配置也是有缺点的，脉冲流量很大可能造成有损(会拒绝很多流量)。</p>
+<h1 id="熔断降级"><a href="#熔断降级" class="headerlink" title="熔断降级"></a>熔断降级</h1><h2 id="Overview-1"><a href="#Overview-1" class="headerlink" title="Overview"></a>Overview</h2><p>在高可用设计中，除了流控外，对分布式系统调用链路中不稳定的资源(比如RPC服务等)进行熔断降级也是保障高可用的重要措施之一。现在的分布式架构中一个服务常常会调用第三方服务，这个第三方服务可能是另外的一个RPC接口、数据库，或者第三方 API 等等。</p>
+<p>然而，除了自身服务外，依赖的外部服务的稳定性是不能绝对保证的。如果依赖的第三方服务出现了不稳定的情况，比如请求的响应时间变长，那么服务自身调用第三方服务的响应时间也会响应变长，也就是<strong>级联效应</strong>，服务自身的线程可能会产生堆积，最终可能耗尽业务自身的线程池，最终服务本身也变得不可用。</p>
+<p>前面描述的问题在分布式链路调用中会产生放大的效果。整个复杂链路中的某一环如果不稳定，就可能会层层级联，最终可能导致整个链路全部挂掉。因此我们需要对不稳定的 <strong>弱依赖服务调用</strong> 进行 <strong>熔断降级</strong>，暂时切断不稳定的服务调用，避免局部不稳定因素导致整个分布式系统的雪崩。</p>
+<p>熔断降级作为保护服务自身的手段，通常在客户端（调用端）进行配置。</p>
+<h2 id="熔断器模型"><a href="#熔断器模型" class="headerlink" title="熔断器模型"></a>熔断器模型</h2><p>Sentinel 熔断降级基于熔断器模式 (circuit breaker pattern) 实现。熔断器内部维护了一个熔断器的状态机，状态机的转换关系如下图所示：</p>
+<p><img src="https://user-images.githubusercontent.com/9434884/82635455-ca075f00-9c32-11ea-9e99-d67518923e0d.png"></p>
+<p>熔断器有三种状态：</p>
+<ol>
+<li>Closed 状态：也是初始状态，该状态下，熔断器会保持闭合，对资源的访问直接通过熔断器的检查。</li>
+<li>Open 状态：断开状态，熔断器处于开启状态，对资源的访问会被切断。熔断器规则中会配置一个熔断超时重试的时间，经过熔断超时重试时长后熔断器会将状态置为 Half-Open 状态，从而进行探测机制。</li>
+<li>Half-Open 状态：半开状态，该状态下除了探测流量，其余对资源的访问也会被切断。探测流量指熔断器处于半开状态时，会周期性的允许一定数目的探测请求通过，如果探测请求能够正常的返回，代表探测成功，此时熔断器会重置状态到 Closed 状态，结束熔断；如果探测失败，则回滚到 Open 状态。</li>
+</ol>
+<p>Sentinel 提供了监听器去监听熔断器状态机的三种状态的转换，方便用户去自定义扩展：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// StateChangeListener listens on the circuit breaker state change event.</span></span><br><span class="line"><span class="keyword">type</span> StateChangeListener <span class="keyword">interface</span> &#123;</span><br><span class="line">        <span class="comment">// 熔断器切换到 Closed 状态时候会调用改函数, prev代表切换前的状态，rule表示当前熔断器对应的规则</span></span><br><span class="line">	OnTransformToClosed(prev State, rule Rule)</span><br><span class="line">        <span class="comment">// 熔断器切换到 Open 状态时候会调用改函数, prev代表切换前的状态，rule表示当前熔断器对应的规则， snapshot表示触发熔断的值</span></span><br><span class="line">	OnTransformToOpen(prev State, rule Rule, snapshot <span class="keyword">interface</span>&#123;&#125;)</span><br><span class="line">        <span class="comment">// 熔断器切换到 HalfOpen 状态时候会调用改函数, prev代表切换前的状态，rule表示当前熔断器对应的规则</span></span><br><span class="line">	OnTransformToHalfOpen(prev State, rule Rule)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以使用 hook 函数，拿到熔断器每次状态切换的事件，以及熔断器对应的 Rule。</p>
+<p>注意：</p>
+<ul>
+<li>监听器 hook 里面携带的规则是基于 copy 的，也就是用户在监听器里面更改 Rule 不会影响到熔断器。此外这里基于拷贝是有一定性能开销的，用户要尽可能减少无效的监听器注册。</li>
+<li>熔断器监听器的注册和清除是非线程安全的，用户必须要在服务启动时配置 Sentinel 时候就注册对应的监听器，应用运行中禁止更改熔断器状态机的监听器。</li>
+</ul>
+<h2 id="熔断器的设计"><a href="#熔断器的设计" class="headerlink" title="熔断器的设计"></a>熔断器的设计</h2><p>衡量下游服务质量时，常用的指标有：RT(response time)、异常数量以及异常比例等等。</p>
+<p>用户通过设置熔断规则(Rule)来给资源添加熔断器。Sentinel会将每一个熔断规则转换成对应的熔断器，熔断器对用户是不可见的。Sentinel 的每个熔断器都会有自己独立的统计结构。</p>
+<p>熔断器的整体检查逻辑可以用几点来精简概括：</p>
+<ol>
+<li>基于熔断器的状态机来判断对资源是否可以访问；</li>
+<li>对不可访问的资源会有探测机制，探测机制保障了对资源访问的弹性恢复；</li>
+<li>熔断器会在对资源访问的完成态去更新统计，然后基于熔断规则更新熔断器状态机。</li>
+</ol>
+<h2 id="熔断策略"><a href="#熔断策略" class="headerlink" title="熔断策略"></a>熔断策略</h2><p>Sentinel 熔断器的三种熔断策略都支持静默期 (规则中通过MinRequestAmount字段表示)。</p>
+<p>静默期是指一个最小的静默请求数，在一个统计周期内，如果对资源的请求数小于设置的静默数，那么熔断器将不会基于其统计值去更改熔断器的状态。</p>
+<p><strong>为什么设置静默期？</strong></p>
+<p>假设在一个统计周期刚刚开始时候，第 1 个请求碰巧是个慢请求，这个时候这个时候的慢调用比例就会是 100%，很明显是不合理，所以存在一定的巧合性。所以静默期提高了熔断器的精准性以及降低误判可能性。</p>
+<p>Sentinel 支持一下几种熔断策略：</p>
+<ul>
+<li>慢调用比例策略 (SlowRequestRatio)：Sentinel 的熔断器不在静默期，并且慢调用的比例大于设置的阈值，则接下来的熔断周期内对资源的访问会自动地被熔断。该策略下需要设置允许的调用 RT 临界值（即最大的响应时间），对该资源访问的响应时间大于该阈值则统计为慢调用。</li>
+<li>错误比例策略 (ErrorRatio)：Sentinel 的熔断器不在静默期，并且在统计周期内资源请求访问异常的比例大于设定的阈值，则接下来的熔断周期内对资源的访问会自动地被熔断。</li>
+<li>错误计数策略 (ErrorCount)：Sentinel 的熔断器不在静默期，并且在统计周期内资源请求访问异常数大于设定的阈值，则接下来的熔断周期内对资源的访问会自动地被熔断。</li>
+</ul>
+<h2 id="熔断降级的规则"><a href="#熔断降级的规则" class="headerlink" title="熔断降级的规则"></a>熔断降级的规则</h2><p>定义：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Rule encompasses the fields of circuit breaking rule.</span></span><br><span class="line"><span class="keyword">type</span> Rule <span class="keyword">struct</span> &#123;</span><br><span class="line">	<span class="comment">// unique id</span></span><br><span class="line">	Id <span class="type">string</span> <span class="string">`json:&quot;id,omitempty&quot;`</span></span><br><span class="line">	<span class="comment">// resource name</span></span><br><span class="line">	Resource <span class="type">string</span>   <span class="string">`json:&quot;resource&quot;`</span></span><br><span class="line">	Strategy Strategy <span class="string">`json:&quot;strategy&quot;`</span></span><br><span class="line">	<span class="comment">// RetryTimeoutMs represents recovery timeout (in milliseconds) before the circuit breaker opens.</span></span><br><span class="line">	<span class="comment">// During the open period, no requests are permitted until the timeout has elapsed.</span></span><br><span class="line">	<span class="comment">// After that, the circuit breaker will transform to half-open state for trying a few &quot;trial&quot; requests.</span></span><br><span class="line">	RetryTimeoutMs <span class="type">uint32</span> <span class="string">`json:&quot;retryTimeoutMs&quot;`</span></span><br><span class="line">	<span class="comment">// MinRequestAmount represents the minimum number of requests (in an active statistic time span)</span></span><br><span class="line">	<span class="comment">// that can trigger circuit breaking.</span></span><br><span class="line">	MinRequestAmount <span class="type">uint64</span> <span class="string">`json:&quot;minRequestAmount&quot;`</span></span><br><span class="line">	<span class="comment">// StatIntervalMs represents statistic time interval of the internal circuit breaker (in ms).</span></span><br><span class="line">	StatIntervalMs <span class="type">uint32</span> <span class="string">`json:&quot;statIntervalMs&quot;`</span></span><br><span class="line">	<span class="comment">// MaxAllowedRtMs indicates that any invocation whose response time exceeds this value (in ms)</span></span><br><span class="line">	<span class="comment">// will be recorded as a slow request.</span></span><br><span class="line">	<span class="comment">// MaxAllowedRtMs only takes effect for SlowRequestRatio strategy</span></span><br><span class="line">	MaxAllowedRtMs <span class="type">uint64</span> <span class="string">`json:&quot;maxAllowedRtMs&quot;`</span></span><br><span class="line">	<span class="comment">// Threshold represents the threshold of circuit breaker.</span></span><br><span class="line">	<span class="comment">// for SlowRequestRatio, it represents the max slow request ratio</span></span><br><span class="line">	<span class="comment">// for ErrorRatio, it represents the max error request ratio</span></span><br><span class="line">	<span class="comment">// for ErrorCount, it represents the max error request count</span></span><br><span class="line">	Threshold <span class="type">float64</span> <span class="string">`json:&quot;threshold&quot;`</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>Id</code>: 表示 Sentinel 规则的全局唯一ID，可选项。</li>
+<li><code>Resource</code>: 熔断器规则生效的埋点资源的名称；</li>
+<li><code>Strategy</code>: 熔断策略，目前支持<code>SlowRequestRatio</code>、<code>ErrorRatio</code>、<code>ErrorCount</code>三种；<ul>
+<li>选择以<strong>慢调用比例</strong> (SlowRequestRatio) 作为阈值，需要设置允许的<strong>最大响应时间</strong>（MaxAllowedRtMs），请求的响应时间大于该值则统计为慢调用。通过 <code>Threshold</code> 字段设置触发熔断的慢调用比例，取值范围为 [0.0, 1.0]。规则配置后，在单位统计时长内请求数目大于设置的最小请求数目，并且慢调用的比例大于阈值，则接下来的熔断时长内请求会自动被熔断。经过熔断时长后熔断器会进入探测恢复状态，若接下来的一个请求响应时间小于设置的最大 RT 则结束熔断，若大于设置的最大 RT 则会再次被熔断。</li>
+<li>选择以<strong>错误比例</strong> (ErrorRatio) 作为阈值，需要设置触发熔断的异常比例（<code>Threshold</code>），取值范围为 [0.0, 1.0]。规则配置后，在单位统计时长内请求数目大于设置的最小请求数目，并且异常的比例大于阈值，则接下来的熔断时长内请求会自动被熔断。经过熔断时长后熔断器会进入探测恢复状态，若接下来的一个请求没有错误则结束熔断，否则会再次被熔断。代码中可以通过 <code>api.TraceError(entry, err)</code> 函数来记录 error。</li>
+</ul>
+</li>
+<li><code>RetryTimeoutMs</code>: 即熔断触发后持续的时间（单位为 ms）。资源进入熔断状态后，在配置的熔断时长内，请求都会快速失败。熔断结束后进入探测恢复模式（HALF-OPEN）。</li>
+<li><code>MinRequestAmount</code>: 静默数量，如果当前统计周期内对资源的访问数量小于静默数量，那么熔断器就处于静默期。换言之，也就是触发熔断的最小请求数目，若当前统计周期内的请求数小于此值，即使达到熔断条件规则也不会触发。</li>
+<li><code>StatIntervalMs</code>: 统计的时间窗口长度（单位为 ms）。</li>
+</ul>
+<h2 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h2><ul>
+<li>分布式系统中降级：假设存在应用A需要调用应用B的接口(特别是一些对接外部公司或者业务的接口时候)，那么一般用于A调用B的接口时的防护；</li>
+<li>数据库慢调用的防护： 假设应用需要读&#x2F;写数据库，但是该读写SQL存在潜在慢SQL的可能性，那么可以对该读写接口做防护，当接口不稳定时候(存在慢SQL)，那么基于熔断器做降级。</li>
+<li>也可以是应用中任意弱依赖接口做降级防护（即自动降级后不影响业务核心链路）</li>
+</ul>
+<h1 id="服务降级"><a href="#服务降级" class="headerlink" title="服务降级"></a>服务降级</h1><h2 id="服务降级和服务熔断的区别"><a href="#服务降级和服务熔断的区别" class="headerlink" title="服务降级和服务熔断的区别"></a>服务降级和服务熔断的区别</h2><p>服务熔断和服务降级是在分布式系统中常用的两种容错机制。都是为了提高系统的可用性(availity)和可靠性(reliability)，但他们的实现方式和目的不同。</p>
+<p>服务熔断是一种基于故障检测的<strong>被动</strong>容错机制，它可以在服务出现故障时快速地断开服务调用，以避免故障的扩散，导致不可用性在系统中扩散，从而保护服务的下游应用免受故障的影响。也便于上游服务回复正常。服务熔断由链路上的某个服务引起，并对框架层次进行处理。</p>
+<p>服务降级是一种<strong>主动</strong>的容错机制。它可以在系统出现压力或负载过大的情况下，通过降低服务的功能或性能来保证系统的可用性。当系统负载过高或资源不足时，会关闭一些不必要的服务或削减服务的功能或性能，以保证核心服务的正常运行。服务降级是从整个系统的负荷情况出发和考虑的，并对业务层次进行处理。</p>
+<p><strong>限流</strong>：限制并发的请求访问量，超过阈值则拒绝；</p>
+<p><strong>降级</strong>：服务分优先级，牺牲非核心服务（不可用），保证核心服务稳定；从整体负荷考虑；通常是一个预防措施；</p>
+<p><strong>熔断</strong>：依赖的上游服务故障触发熔断，避免引发本系统崩溃；系统自动执行和恢复</p>
+<h2 id="服务降级的实现"><a href="#服务降级的实现" class="headerlink" title="服务降级的实现"></a>服务降级的实现</h2><ol>
+<li>熔断降级：在系统压力达到一定阈值时，通过熔断机制将请求转发到备用服务或者返回预先设定的默认值，以避免系统崩溃或出现过载。</li>
+<li>限流降级：通过限制并发请求的数量或者每秒请求的速率，来控制系统的负载，从而保证系统的稳定性和可用性。</li>
+<li>异步处理：将某些请求转为异步处理，不影响主流程的执行速度，从而避免因为某些业务需求导致整个系统的性能下降。</li>
+<li>动态降级：通过动态调整系统的服务质量和响应速度来适应系统的负载情况，例如当系统负载过高时，可以将响应速度设置为低速，来减少系统资源的消耗。</li>
+<li>服务优先级降级：对不同的服务设置不同的优先级，当系统负载过高时，优先处理高优先级的服务，降低低优先级服务的响应速度或者降级处理。</li>
+<li>静态降级：预先设置系统的响应速度和服务质量等级，当系统负载过高时，直接按照预设的降级级别进行处理，例如直接返回默认值或者错误码等。</li>
+</ol>
+<p>至少在现在看来，服务降级更像是一个更抽象的的概念，他包含一部分限流或者熔断的措施。但是考量的尺度要比限流和熔断要大（限流和熔断更像是为了保护某一个细分的业务，而降级则是从系统的性能上考虑）</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://example.com">GDshenqingNo1</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2023/05/09/sentinel/">http://example.com/2023/05/09/sentinel/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">梁伟健的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="/img/lucy.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2023/05/09/%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E3%80%81CDN/"><img class="prev-cover" src="/img/lucy.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">正向代理、反向代理、CDN</div></div></a></div><div class="next-post pull-right"><a href="/2023/03/30/Gorm/"><img class="next-cover" src="/img/lucy.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Gorm</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">GDshenqingNo1</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/GDshenqingNo1"><i class="fab fa-github"></i><span>Github</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/GDshenqingNo1" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:liangweijian666@outlook.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BF%AB%E9%80%9F%E5%BC%80%E5%A7%8B"><span class="toc-number">1.</span> <span class="toc-text">快速开始</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E5%85%A5Sentinel%E4%BE%9D%E8%B5%96"><span class="toc-number">1.1.</span> <span class="toc-text">引入Sentinel依赖</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E7%94%A8%E9%85%8D%E7%BD%AE%E5%8F%8A%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-number">1.2.</span> <span class="toc-text">通用配置及初始化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89%E8%B5%84%E6%BA%90"><span class="toc-number">1.3.</span> <span class="toc-text">定义资源</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%8B%E7%82%B9"><span class="toc-number">1.3.1.</span> <span class="toc-text">埋点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%84%E5%88%99%E9%85%8D%E7%BD%AE"><span class="toc-number">1.3.2.</span> <span class="toc-text">规则配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A1%AC%E7%BC%96%E7%A0%81%E6%96%B9%E5%BC%8F"><span class="toc-number">1.3.3.</span> <span class="toc-text">硬编码方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E6%95%B0%E6%8D%AE%E6%BA%90"><span class="toc-number">1.3.4.</span> <span class="toc-text">动态数据源</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6"><span class="toc-number">2.</span> <span class="toc-text">流量控制</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Overview"><span class="toc-number">2.1.</span> <span class="toc-text">Overview</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%81%E6%8E%A7%E8%A7%84%E5%88%99"><span class="toc-number">2.2.</span> <span class="toc-text">流控规则</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6%E5%99%A8%E7%9A%84%E7%BB%9F%E8%AE%A1%E7%BB%93%E6%9E%84"><span class="toc-number">2.3.</span> <span class="toc-text">流量控制器的统计结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E5%9C%BA%E6%99%AF%E7%9A%84%E8%A7%84%E5%88%99%E9%85%8D%E7%BD%AE"><span class="toc-number">2.4.</span> <span class="toc-text">常见场景的规则配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8EQPS%E5%AF%B9%E6%9F%90%E4%B8%AA%E8%B5%84%E6%BA%90%E9%99%90%E6%B5%81"><span class="toc-number">2.4.1.</span> <span class="toc-text">基于QPS对某个资源限流</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8E%E4%B8%80%E5%AE%9A%E7%BB%9F%E8%AE%A1%E9%97%B4%E9%9A%94%E6%97%B6%E9%97%B4%E6%9D%A5%E6%8E%A7%E5%88%B6%E6%80%BB%E7%9A%84%E8%AF%B7%E6%B1%82%E6%95%B0"><span class="toc-number">2.4.2.</span> <span class="toc-text">基于一定统计间隔时间来控制总的请求数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AF%AB%E7%A7%92%E7%BA%A7%E5%88%AB%E6%B5%81%E6%8E%A7"><span class="toc-number">2.4.3.</span> <span class="toc-text">毫秒级别流控</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%86%94%E6%96%AD%E9%99%8D%E7%BA%A7"><span class="toc-number">3.</span> <span class="toc-text">熔断降级</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Overview-1"><span class="toc-number">3.1.</span> <span class="toc-text">Overview</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%86%94%E6%96%AD%E5%99%A8%E6%A8%A1%E5%9E%8B"><span class="toc-number">3.2.</span> <span class="toc-text">熔断器模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%86%94%E6%96%AD%E5%99%A8%E7%9A%84%E8%AE%BE%E8%AE%A1"><span class="toc-number">3.3.</span> <span class="toc-text">熔断器的设计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%86%94%E6%96%AD%E7%AD%96%E7%95%A5"><span class="toc-number">3.4.</span> <span class="toc-text">熔断策略</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%86%94%E6%96%AD%E9%99%8D%E7%BA%A7%E7%9A%84%E8%A7%84%E5%88%99"><span class="toc-number">3.5.</span> <span class="toc-text">熔断降级的规则</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">3.6.</span> <span class="toc-text">应用场景</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E9%99%8D%E7%BA%A7"><span class="toc-number">4.</span> <span class="toc-text">服务降级</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E9%99%8D%E7%BA%A7%E5%92%8C%E6%9C%8D%E5%8A%A1%E7%86%94%E6%96%AD%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">4.1.</span> <span class="toc-text">服务降级和服务熔断的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E9%99%8D%E7%BA%A7%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-number">4.2.</span> <span class="toc-text">服务降级的实现</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/05/27/go-Makefile/" title="Makefile">Makefile</a><time datetime="2023-05-27T10:34:23.147Z" title="发表于 2023-05-27 18:34:23">2023-05-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/05/27/flag&amp;&amp;args/" title="flag &amp; args">flag &amp; args</a><time datetime="2023-05-27T10:33:15.051Z" title="发表于 2023-05-27 18:33:15">2023-05-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/05/27/Golang%20Note/" title="goland note">goland note</a><time datetime="2023-05-27T10:32:12.127Z" title="发表于 2023-05-27 18:32:12">2023-05-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/05/09/%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E3%80%81CDN/" title="正向代理、反向代理、CDN">正向代理、反向代理、CDN</a><time datetime="2023-05-09T15:33:35.034Z" title="发表于 2023-05-09 23:33:35">2023-05-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/05/09/sentinel/" title="Sentinel限流、熔断、降级">Sentinel限流、熔断、降级</a><time datetime="2023-05-09T15:33:24.742Z" title="发表于 2023-05-09 23:33:24">2023-05-09</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By GDshenqingNo1</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><div class="js-pjax"></div><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
